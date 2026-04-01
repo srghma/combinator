@@ -56,10 +56,19 @@ var (
 	Schonfinkel = Basis{I, K, T, Z, S}
 )
 
+// Fixed-point (https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator)
+var (
+	Y = Combinator{
+		Name:       "Y",
+		Arguments:  []string{"f"},
+		Definition: "S(K(SII))(S(S(KS)K)(K(SII)))f",
+	}
+)
+
 // SK and SKI (https://en.wikipedia.org/wiki/SKI_combinator_calculus)
 var (
 	SK  = Basis{S, K}
-	SKI = Basis{S, K, I}
+	SKI = Basis{S, K, I, Y}
 )
 
 // BCKW (https://en.wikipedia.org/wiki/B,_C,_K,_W_system)

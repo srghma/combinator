@@ -121,3 +121,13 @@ func TestFullyImproperCombinators(t *testing.T) {
 		})
 	}
 }
+
+func TestY(t *testing.T) {
+	_, err := SKI.Transform(context.Background(), "Yf")
+	if err == nil {
+		t.Error("expected error")
+	}
+	if err.Error() != "loop detected" {
+		t.Errorf("expected error loop detected, got %s", err.Error())
+	}
+}
