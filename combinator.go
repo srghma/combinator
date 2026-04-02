@@ -143,6 +143,9 @@ var (
 		Combinator{
 			Name:      "i",
 			Arguments: []string{"x"},
+			// Note the use of other combinators in the definition
+			// makes Iota "improper"
+			//
 			// i x = x S K
 			// i = S (S I (K S)) (K K)
 			Definition: "xSK",
