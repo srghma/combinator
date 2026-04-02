@@ -414,7 +414,39 @@ Schönfinkel now provides us with the methodology of how to move the the argumen
 
 As far as our implementation goes, we can treat `U` as a constant as it has no meaning that is compatible with our tree definition. Maybe some day I will come back and implement the conversion of first-order logic to combinatory logic and vice versa.
 
-The modern-day interpretation of this section is probably that combinatory logic is useful as an encoding mechanism to get as little syntax overhead as possible (and first-order logic is one such example). I find systems that build on top of the system (like the [Church encoding](https://en.wikipedia.org/wiki/Church_encoding)) much more interesting. Church encoding can be found in [combinator.go](./church.go) and [combinator_test.go](./church_test.go).
+The modern-day interpretation of this section is probably that combinatory logic is useful as an encoding mechanism to get as little syntax overhead as possible (and first-order logic is one such example). I find systems that build on top of the system (like the [Church encoding](https://en.wikipedia.org/wiki/Church_encoding)) much more interesting. Church encoding can be found in [combinator.go](./combinator.go) and [combinator_test.go](./combinator_test.go).
+
+### Fixed-point Combinator
+
+A [fixed-point combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator) is a combinator that can be used to implement recursion in a system that doesn't have it built-in. The most famous of these is the **Y Combinator**.
+
+The Y combinator has the property that:
+
+$$Yf = f(Yf)$$
+
+This means that $Yf$ is a fixed point of $f$. In our SKI basis, we can define $Y$ as:
+
+$$Y = S (K (S I I)) (S (S (K S) K) (K (S I I)))$$
+
+(Note: $S(S(KS)K)$ is $Z$ in the Schönfinkel basis, or $B$ in the BCKW basis).
+
+Because $Yf$ expands infinitely, our reduction engine will eventually hit a loop detector or timeout when attempting to fully reduce it. You can see this in action in `TestY` in [combinator_test.go](./combinator_test.go).
+
+### Universal Combinator
+
+A [universal combinator](https://en.wikipedia.org/wiki/Universal_combinator) is a combinator that can represent any other combinator through a specific encoding. Similar to [John Tromp's Binary Lambda Calculus](https://gist.github.com/tromp/86b3184f852f65bfb814e3ab0987d861), we can define an encoding for SKI terms and a universal combinator $U$ to execute them.
+
+Our encoding represents each SKI combinator as a higher-order combinator:
+- $enc(S) = \lambda s k i a. s$ (represented as `A` in our implementation)
+- $enc(K) = \lambda s k i a. k$ (represented as `B` in our implementation)
+- $enc(I) = \lambda s k i a. i$ (represented as `C` in our implementation)
+- $enc(MN) = \lambda s k i a. a \ enc(M) \ enc(N)$ (represented as `D` in our implementation)
+
+The universal combinator $U$ is defined such that it decodes these terms and applies the resulting SKI combinators:
+
+$$U = Y (\lambda u e. e \ S \ K \ I \ (\lambda m n. u \ m \ (u \ n)))$$
+
+In our `Universal` basis, you can transform encoded terms back into their SKI counterparts. For example, `ASKII` will reduce to `S`. You can find these examples in `TestUniversal` in [combinator_test.go](./combinator_test.go).
 
 ## Section 6
 

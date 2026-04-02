@@ -56,10 +56,60 @@ var (
 	Schonfinkel = Basis{I, K, T, Z, S}
 )
 
+// Fixed-point (https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator)
+var (
+	Y = Combinator{
+		Name:       "Y",
+		Arguments:  []string{"f"},
+		Definition: "S(K(SII))(S(S(KS)K)(K(SII)))f",
+	}
+)
+
 // SK and SKI (https://en.wikipedia.org/wiki/SKI_combinator_calculus)
 var (
 	SK  = Basis{S, K}
-	SKI = Basis{S, K, I}
+	SKI = Basis{S, K, I, Y}
+)
+
+// Universal Combinator (https://en.wikipedia.org/wiki/Universal_combinator)
+// Based on a higher-order encoding of SKI terms.
+var (
+	// Encoded S: λs k i a. s
+	ES = Combinator{
+		Name:       "A",
+		Arguments:  []string{"s", "k", "i", "a"},
+		Definition: "s",
+	}
+
+	// Encoded K: λs k i a. k
+	EK = Combinator{
+		Name:       "B",
+		Arguments:  []string{"s", "k", "i", "a"},
+		Definition: "k",
+	}
+
+	// Encoded I: λs k i a. i
+	EI = Combinator{
+		Name:       "C",
+		Arguments:  []string{"s", "k", "i", "a"},
+		Definition: "i",
+	}
+
+	// Encoded Application: λm n s k i a. a m n
+	EA = Combinator{
+		Name:       "D",
+		Arguments:  []string{"m", "n", "s", "k", "i", "a"},
+		Definition: "amn",
+	}
+
+	// Universal Combinator U: Y (λu e. e S K I (λm n. u m (u n)))
+	U = Combinator{
+		Name:       "U",
+		Arguments:  []string{"e"},
+		Definition: "Y(S(K(S(S(S(SI(KS))(KK))(KI))))(S(KK)(S(S(KS)(S(K(S(KS)))(S(KK))))K)))e",
+	}
+
+	Universal = Basis{S, K, I, Y, ES, EK, EI, EA, U}
 )
 
 // BCKW (https://en.wikipedia.org/wiki/B,_C,_K,_W_system)
@@ -95,6 +145,9 @@ var (
 			Arguments: []string{"x"},
 			// Note the use of other combinators in the definition
 			// makes Iota "improper"
+			//
+			// i x = x S K
+			// i = S (S I (K S)) (K K)
 			Definition: "xSK",
 		},
 	}

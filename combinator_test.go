@@ -121,3 +121,43 @@ func TestFullyImproperCombinators(t *testing.T) {
 		})
 	}
 }
+
+func TestY(t *testing.T) {
+	// Use a small frame limit locally for this test to avoid stack overflow
+	oldMax := MaxFrames
+	MaxFrames = 100
+	defer func() { MaxFrames = oldMax }()
+
+	_, err := SKI.Transform(context.Background(), "Yf")
+	if err == nil {
+		t.Error("expected error")
+	}
+	if err.Error() != "loop detected" {
+		t.Errorf("expected error loop detected, got %s", err.Error())
+	}
+}
+
+func TestUniversal(t *testing.T) {
+	tests := []struct {
+		expr     string
+		expected string
+	}{
+		{"ASKII", "S"},
+		{"BSKII", "K"},
+		{"CSKII", "I"},
+	}
+
+    basis := Universal
+
+	for _, tc := range tests {
+		t.Run(tc.expr, func(t *testing.T) {
+			actualResult, err := basis.Transform(context.Background(), tc.expr)
+			if err != nil {
+				t.Fatalf("Transform failed: %v", err)
+			}
+			if tc.expected != actualResult {
+				t.Errorf("transformed %s incorrectly, expected %s but got %s", tc.expr, tc.expected, actualResult)
+			}
+		})
+	}
+}
