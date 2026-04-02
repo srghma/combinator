@@ -44,9 +44,9 @@ func TestSKI(t *testing.T) {
 
 func TestIota(t *testing.T) {
 	tests := map[string]string{
-		"iix":           "x",
-		"(i(i(ii)))":    "K",
-		"(i(i(i(ii))))": "S",
+		"jjx":           "x",
+		"(j(j(jj)))":    "K",
+		"(j(j(j(jj))))": "S",
 	}
 	for statement, expectedResult := range tests {
 		t.Run(statement, func(t *testing.T) {
@@ -123,11 +123,44 @@ func TestFullyImproperCombinators(t *testing.T) {
 }
 
 func TestY(t *testing.T) {
+	// Use a small frame limit locally for this test to avoid stack overflow
+	oldMax := MaxFrames
+	MaxFrames = 100
+	defer func() { MaxFrames = oldMax }()
+
 	_, err := SKI.Transform(context.Background(), "Yf")
 	if err == nil {
 		t.Error("expected error")
 	}
 	if err.Error() != "loop detected" {
 		t.Errorf("expected error loop detected, got %s", err.Error())
+	}
+}
+
+func TestUniversal(t *testing.T) {
+	// (s S K I I) -> S
+	// (k S K I I) -> K
+	// (i S K I I) -> I
+	tests := []struct {
+		expr     string
+		expected string
+	}{
+		{"sSKII", "S"},
+		{"kSKII", "K"},
+		{"iSKII", "I"},
+	}
+
+    basis := Universal
+
+	for _, tc := range tests {
+		t.Run(tc.expr, func(t *testing.T) {
+			actualResult, err := basis.Transform(context.Background(), tc.expr)
+			if err != nil {
+				t.Fatalf("Transform failed: %v", err)
+			}
+			if tc.expected != actualResult {
+				t.Errorf("transformed %s incorrectly, expected %s but got %s", tc.expr, tc.expected, actualResult)
+			}
+		})
 	}
 }

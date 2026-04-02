@@ -434,39 +434,25 @@ Because $Yf$ expands infinitely, our reduction engine will eventually hit a loop
 
 ## Section 6
 
+
+A [universal combinator](https://en.wikipedia.org/wiki/Universal_combinator) is a combinator that can represent any other combinator through a specific encoding. Similar to [John Tromp's Binary Lambda Calculus](https://gist.github.com/tromp/86b3184f852f65bfb814e3ab0987d861), we can define an encoding for SKI terms and a universal combinator $U$ to execute them.
+- $enc(S) = \lambda s k i a. s$ (represented as `Es` in our implementation)
+- $enc(K) = \lambda s k i a. k$ (represented as `Ek` in our implementation)
+- $enc(I) = \lambda s k i a. i$ (represented as `Ei` in our implementation)
+- $enc(MN) = \lambda s k i a. a \ enc(M) \ enc(N)$ (represented as `Ea` in our implementation)
+
+The universal combinator $U$ is defined such that it decodes these terms and applies the resulting SKI combinators:
+
+$$U = Y (\lambda u e. e \ S \ K \ I \ (\lambda m n. u \ m \ (u \ n)))$$
+
+In our `Universal` basis, you can transform encoded terms back into their SKI counterparts. For example, `U(Ea Ek Ek)` will reduce to `K` (which is $enc^{-1}(enc(K) \ enc(K))$). You can find these examples in `TestUniversal` in [combinator_test.go](./combinator_test.go).
+
+## Section 6
+
 ### `J` and Iota
 
 In the final section, we see Schönfinkel attempt to reduce our combinator basis to just one combinator - `J`. `J` unfortunately has a definition that is incompatible with the previous explanation of combinators - `J` is made up of multiple sub-definitions depending on its argument. This is an additional notion that is not quite in the spirit of the rest of the paper.
 
-In modern times we have [iota](https://en.wikipedia.org/wiki/Iota_and_Jot), which very much accomplishes what Schönfinkel was trying to get at. Iota is the combinator `ι` (which for the remainder of this guide and implementation will be just `i` for ease of use). The iota combinator is defined as follows:
-
-$$ix = xSK$$
-
-so that
-
-$$ii = I$$
-
-$$i(i(ii)) = K$$
-
-$$i(i(i(ii))) = S$$
-
-I will note that Iota is technically "improper" (see [here](https://news.ycombinator.com/item?id=25335175) for discussion) as it is defined from other combinators. It is still quite amazing that we have a language with one character that can encompass all of computation.
-
-### Further reduction
-
-The final three paragraphs of the paper are not from Schönfinkel himself but written by the editor, [Heinrich Behmann](https://en.wikipedia.org/wiki/Heinrich_Behmann).
-
-In the first paragraph, he articulates the fact that we can move all occurrences of `U` to the end of the expression, leave it off, and assume that our expression takes one argument, `U`.
-
-The second paragraph aims to rid expressions of parentheses. One would want to rid parentheses for a few reasons:
-1. So that any expression can be represented by a single number, usually with some [Gödel numbering](https://en.wikipedia.org/wiki/G%C3%B6del_numbering) scheme.
-1. So that every possible expression is a valid expression.
-
-Behmann suggests that we could simply leave out the parentheses, and let the combinators handle the work. Quine in his introduction had this to say:
-
-> However, as Behmann recognized later in a letter to H. B. Curry, there is a fallacy here; the routine can generate new parentheses and not terminate
-
-The last paragraph is not super interperable to me. If you have a good grasp of what this is saying please reach out!
 
 ### Iota, Jot, etc.
 
