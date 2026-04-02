@@ -73,32 +73,31 @@ var (
 
 // Universal Combinator (https://en.wikipedia.org/wiki/Universal_combinator)
 // Based on a higher-order encoding of SKI terms.
-// We use lowercase letters to represent encoded versions.
 var (
 	// Encoded S: λs k i a. s
-	Es = Combinator{
-		Name:       "s",
+	ES = Combinator{
+		Name:       "A",
 		Arguments:  []string{"s", "k", "i", "a"},
 		Definition: "s",
 	}
 
 	// Encoded K: λs k i a. k
-	Ek = Combinator{
-		Name:       "k",
+	EK = Combinator{
+		Name:       "B",
 		Arguments:  []string{"s", "k", "i", "a"},
 		Definition: "k",
 	}
 
 	// Encoded I: λs k i a. i
-	Ei = Combinator{
-		Name:       "i",
+	EI = Combinator{
+		Name:       "C",
 		Arguments:  []string{"s", "k", "i", "a"},
 		Definition: "i",
 	}
 
 	// Encoded Application: λm n s k i a. a m n
-	Ea = Combinator{
-		Name:       "a",
+	EA = Combinator{
+		Name:       "D",
 		Arguments:  []string{"m", "n", "s", "k", "i", "a"},
 		Definition: "amn",
 	}
@@ -110,7 +109,7 @@ var (
 		Definition: "Y(S(K(S(S(S(SI(KS))(KK))(KI))))(S(KK)(S(S(KS)(S(K(S(KS)))(S(KK))))K)))e",
 	}
 
-	Universal = Basis{S, K, I, Y, Es, Ek, Ei, Ea, U}
+	Universal = Basis{S, K, I, Y, ES, EK, EI, EA, U}
 )
 
 // BCKW (https://en.wikipedia.org/wiki/B,_C,_K,_W_system)
@@ -138,17 +137,14 @@ var (
 
 // Iota (https://en.wikipedia.org/wiki/Iota_and_Jot)
 var (
-	// Standard Iota uses "i" for ix = xSK.
-    // Since we used "i" for Encoded I above, let's rename Iota basis's i to avoid conflict.
-    // However, looking at original combinator.go, i was lowercase.
-    // Let's use 'j' for iota in our implementation if needed, but let's stick to 'i' for Encoded I
-    // and see if Iota test still works. Actually, I'll rename encoded terms slightly.
 	Iota = Basis{
 		S,
 		K,
 		Combinator{
-			Name:      "j",
+			Name:      "i",
 			Arguments: []string{"x"},
+			// i x = x S K
+			// i = S (S I (K S)) (K K)
 			Definition: "xSK",
 		},
 	}

@@ -44,9 +44,9 @@ func TestSKI(t *testing.T) {
 
 func TestIota(t *testing.T) {
 	tests := map[string]string{
-		"jjx":           "x",
-		"(j(j(jj)))":    "K",
-		"(j(j(j(jj))))": "S",
+		"iix":           "x",
+		"(i(i(ii)))":    "K",
+		"(i(i(i(ii))))": "S",
 	}
 	for statement, expectedResult := range tests {
 		t.Run(statement, func(t *testing.T) {
@@ -138,16 +138,13 @@ func TestY(t *testing.T) {
 }
 
 func TestUniversal(t *testing.T) {
-	// (s S K I I) -> S
-	// (k S K I I) -> K
-	// (i S K I I) -> I
 	tests := []struct {
 		expr     string
 		expected string
 	}{
-		{"sSKII", "S"},
-		{"kSKII", "K"},
-		{"iSKII", "I"},
+		{"ASKII", "S"},
+		{"BSKII", "K"},
+		{"CSKII", "I"},
 	}
 
     basis := Universal

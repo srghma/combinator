@@ -437,16 +437,16 @@ Because $Yf$ expands infinitely, our reduction engine will eventually hit a loop
 A [universal combinator](https://en.wikipedia.org/wiki/Universal_combinator) is a combinator that can represent any other combinator through a specific encoding. Similar to [John Tromp's Binary Lambda Calculus](https://gist.github.com/tromp/86b3184f852f65bfb814e3ab0987d861), we can define an encoding for SKI terms and a universal combinator $U$ to execute them.
 
 Our encoding represents each SKI combinator as a higher-order combinator:
-- $enc(S) = \lambda s k i a. s$ (represented as `s` in our implementation)
-- $enc(K) = \lambda s k i a. k$ (represented as `k` in our implementation)
-- $enc(I) = \lambda s k i a. i$ (represented as `i` in our implementation)
-- $enc(MN) = \lambda s k i a. a \ enc(M) \ enc(N)$ (represented as `a` in our implementation)
+- $enc(S) = \lambda s k i a. s$ (represented as `A` in our implementation)
+- $enc(K) = \lambda s k i a. k$ (represented as `B` in our implementation)
+- $enc(I) = \lambda s k i a. i$ (represented as `C` in our implementation)
+- $enc(MN) = \lambda s k i a. a \ enc(M) \ enc(N)$ (represented as `D` in our implementation)
 
 The universal combinator $U$ is defined such that it decodes these terms and applies the resulting SKI combinators:
 
 $$U = Y (\lambda u e. e \ S \ K \ I \ (\lambda m n. u \ m \ (u \ n)))$$
 
-In our `Universal` basis, you can transform encoded terms back into their SKI counterparts. For example, `sSKII` will reduce to `S`. You can find these examples in `TestUniversal` in [combinator_test.go](./combinator_test.go).
+In our `Universal` basis, you can transform encoded terms back into their SKI counterparts. For example, `ASKII` will reduce to `S`. You can find these examples in `TestUniversal` in [combinator_test.go](./combinator_test.go).
 
 ## Section 6
 
